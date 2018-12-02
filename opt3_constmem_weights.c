@@ -17,8 +17,8 @@ namespace mxnet
 {
 namespace op
 {
-
-  __constant__ float weights[24*12*7*7];  //TAs confirmed these values on piazza. They should work for any cases
+  int constMemSize = 24 * 12 * 7 * 7; //TAs confirmed these values on piazza. They should work for any cases (7 = K for this project)
+  __constant__ float weights[constMemSize];
 
 __global__ void forward_kernel(float *y, const float *x, const float *k, const int B, const int M, const int C, const int H, const int W, const int K)
 {
@@ -96,7 +96,7 @@ void forward<gpu, float>(mshadow::Tensor<gpu, 4, float> &y, const mshadow::Tenso
     dim3 gridDim(B, M, Z);
 
     //Optimization 3: Copy weights into constant memory
-    int weightSize = 12*49; //TODO: Figure out what these 2 lines mean
+    int weightSize = 12*7*7; //TODO: Figure out what these 2 lines mean
     if(M != 12) weightSize = weightSize * 24;
     cudaMemcpyToSymbol(weights, w.dptr_, weightSize * sizeof(float), 0, cudaMemcpyHostToDevice);
 
