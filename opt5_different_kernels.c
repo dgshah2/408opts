@@ -17,6 +17,8 @@ namespace mxnet
 {
 namespace op
 {
+  __constant__ float weights[24 * 12 * 7 * 7];  //TAs confirmed these values on piazza. They should work for any cases (7 = K for this project)
+
   __global__ void shmem_convolution(float *y, const float *x, const float *k, const int B, const int M, const int C, const int H, const int W, const int K)
   {
 
@@ -152,6 +154,9 @@ void forward<gpu, float>(mshadow::Tensor<gpu, 4, float> &y, const mshadow::Tenso
     int W = x.shape_[3];
     int K = w.shape_[3];
 
+    /* Debugging */
+    printf("B = %d | M = %d | C = %d | H = %d | W = %d | K = %d \n", B, M, C, H, W, K);
+
     int W_out = W - K + 1;	//Output width (ghost elements subtracted from input width)
     int H_out = H - K + 1;	//Output height (ghost elements subtracted from input height)
 
@@ -164,7 +169,7 @@ void forward<gpu, float>(mshadow::Tensor<gpu, 4, float> &y, const mshadow::Tenso
     dim3 blockDim(TILE_WIDTH, TILE_WIDTH, 1);
     dim3 gridDim(B, M, Z);
 
-    if(/*TODO: What is the var for dataset?*/ == 100) {
+    if(B == 100) { //TODO: Check
 
       //Optimization A: Copy weights into constant memory
       int weightSize = 12*7*7; //TODO: Figure out what these 2 lines mean
@@ -181,7 +186,7 @@ void forward<gpu, float>(mshadow::Tensor<gpu, 4, float> &y, const mshadow::Tenso
       size_t shmem_size = sizeof(float) * ((X_tile_width*X_tile_width) + K*K);
 
       // Call the kernel
-      shmem_convolution<<<gridDim, blockDim, shmem_size>>>(y.dptr_,x.dptr_,w.dptr_, B,M,C,H,W
+      shmem_convolution<<<gridDim, blockDim, shmem_size>>>(y.dptr_,x.dptr_,w.dptr_, B,M,C,H,W);
     }
 
     // Use MSHADOW_CUDA_CALL to check for CUDA runtime errors.

@@ -17,8 +17,7 @@ namespace mxnet
 {
 namespace op
 {
-  int constMemSize = 24 * 12 * 7 * 7; //TAs confirmed these values on piazza. They should work for any cases (7 = K for this project)
-  __constant__ float weights[constMemSize];
+  __constant__ float weights[24 * 12 * 7 * 7];  //TAs confirmed these values on piazza. They should work for any cases (7 = K for this project)
 
 __global__ void forward_kernel(float *y, const float *x, const float *k, const int B, const int M, const int C, const int H, const int W, const int K)
 {
