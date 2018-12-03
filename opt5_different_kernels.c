@@ -155,7 +155,7 @@ void forward<gpu, float>(mshadow::Tensor<gpu, 4, float> &y, const mshadow::Tenso
     int K = w.shape_[3];
 
     /* Debugging */
-    printf("B = %d | M = %d | C = %d | H = %d | W = %d | K = %d \n", B, M, C, H, W, K);
+    //printf("B = %d | M = %d | C = %d | H = %d | W = %d | K = %d \n", B, M, C, H, W, K);
 
     int W_out = W - K + 1;	//Output width (ghost elements subtracted from input width)
     int H_out = H - K + 1;	//Output height (ghost elements subtracted from input height)
