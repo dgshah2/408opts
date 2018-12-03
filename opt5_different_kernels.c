@@ -186,7 +186,7 @@ void forward<gpu, float>(mshadow::Tensor<gpu, 4, float> &y, const mshadow::Tenso
       size_t shmem_size = sizeof(float) * ((X_tile_width*X_tile_width) + K*K);
 
       // Call the kernel
-      shmem_convolution<<<gridDim, blockDim, shmem_size>>>(y.dptr_,x.dptr_,w.dptr_, B,M,C,H,W);
+      shmem_convolution<<<gridDim, blockDim, shmem_size>>>(y.dptr_,x.dptr_,w.dptr_, B,M,C,H,W,K);
     }
 
     // Use MSHADOW_CUDA_CALL to check for CUDA runtime errors.
